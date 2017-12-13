@@ -2,3 +2,9 @@ body {
     background-color: red;
     color: white;
 }
+
+.image {
+    background: url(../image/girl_200.png);
+    width: 200px;
+    height: 200px;
+}

@@ -1,6 +1,11 @@
+// 设置绝对路径
+const website = {
+	publicPath: 'http://127.0.0.1:80/'
+}
 const path = require('path');
 // const uglify = require('uglifyjs-webpack-plugin');
 const htmlPlugin = require('html-webpack-plugin');
+const extractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
 	// 入口文件的配置项
 	entry: {
@@ -17,7 +22,9 @@ module.exports = {
        [name]的意思是有几个入口文件，
        根据入口文件名打包出几个文件
     */
-		filename: '[name].js'
+		filename: '[name].js',
+		// 设置绝对路径
+		publicPath: website.publicPath
 	},
 
 	// 模块，例如压缩图片，解析CSS
@@ -26,7 +33,23 @@ module.exports = {
 			// 正则匹配文件扩展名
 			test: /\.css$/,
 			// 使用的loader名称
-			use: ['style-loader', 'css-loader']
+			use: extractTextPlugin.extract({
+				fallback: 'style-loader',
+				use: 'css-loader'
+			})
+		}, {
+			test: /\.(png|jpg|gif)/,
+			use: [{
+				loader: 'url-loader',
+				// 小于limit设置的字节的文件被打成Base64格式
+				options: {
+					limit: 5,
+					outputPath: 'images/'
+				}
+			}]
+		}, {
+			test: /\.(htm|html)$/i,
+			use: ['html-withimg-loader']
 		}]
 	},
 
@@ -44,7 +67,8 @@ module.exports = {
 			hash: true,
 			// 入口文件
 			template: './src/index.html'
-		})
+		}),
+		new extractTextPlugin('/css/index.css')
 	],
 
 	// 配置webpack开发服务功能
