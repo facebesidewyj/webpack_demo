@@ -6,6 +6,9 @@ const path = require('path');
 // const uglify = require('uglifyjs-webpack-plugin');
 const htmlPlugin = require('html-webpack-plugin');
 const extractTextPlugin = require('extract-text-webpack-plugin');
+// 同步检查html模板，引入glob
+const glob = require('glob');
+const purifyCSSPlugin = require('purifycss-webpack');
 module.exports = {
 	// 入口文件的配置项
 	entry: {
@@ -35,7 +38,12 @@ module.exports = {
 			// 使用的loader名称
 			use: extractTextPlugin.extract({
 				fallback: 'style-loader',
-				use: 'css-loader'
+				use: [{
+					loader: 'css-loader',
+					options: {
+						importLoaders: 1
+					}
+				}, 'postcss-loader']
 			})
 		}, {
 			test: /\.(png|jpg|gif)/,
@@ -50,6 +58,22 @@ module.exports = {
 		}, {
 			test: /\.(htm|html)$/i,
 			use: ['html-withimg-loader']
+		}, {
+			test: /\.less$/,
+			use: extractTextPlugin.extract({
+				use: [{
+					loader: 'css-loader'
+				}, {
+					loader: 'less-loader'
+				}],
+				fallback: 'style-loader'
+			})
+		}, {
+			test: /\.(jsx|js)$/,
+			use: {
+				loader: 'babel-loader',
+			},
+			exclude: /node_modules/
 		}]
 	},
 
@@ -68,7 +92,11 @@ module.exports = {
 			// 入口文件
 			template: './src/index.html'
 		}),
-		new extractTextPlugin('/css/index.css')
+		new extractTextPlugin('/css/index.css'),
+		new purifyCSSPlugin({
+			// 寻找html模板,检查哪些css被使用
+			paths: glob.sync(path.join(__dirname, 'src/*.html')),
+		})
 	],
 
 	// 配置webpack开发服务功能

@@ -4,7 +4,16 @@ body {
 }
 
 .image {
+    display: flex;
     background: url(../image/girl_200.png);
     width: 200px;
     height: 200px;
+    box-sizing: border-box;
+}
+
+.not-use {
+    display: flex;
+    color: red;
+    width: 100px;
+    height: 100px;
 }

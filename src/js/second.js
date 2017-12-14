@@ -1,1 +1,3 @@
-alert('hello webpack~');
+let a = 'hello webpack!'
+
+alert(a);
