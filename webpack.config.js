@@ -3,18 +3,25 @@ const website = {
 	publicPath: 'http://127.0.0.1:80/'
 }
 const path = require('path');
+
 // const uglify = require('uglifyjs-webpack-plugin');
 const htmlPlugin = require('html-webpack-plugin');
 const extractTextPlugin = require('extract-text-webpack-plugin');
+
 // 同步检查html模板，引入glob
 const glob = require('glob');
 const purifyCSSPlugin = require('purifycss-webpack');
+
+// 引入人口文件模块
+const entry = require('./webpack_config/entry_webpack.js');
+
+
 module.exports = {
+	// 配置source-map
+	devtool: 'eval-source-map',
+
 	// 入口文件的配置项
-	entry: {
-		entry: './src/js/entry.js',
-		second: './src/js/second.js'
-	},
+	entry: entry.path,
 
 	// 出口文件的配置项
 	output: {
